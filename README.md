@@ -1,174 +1,432 @@
 # Sample Mono Repository - Maven Java
 
-A Java Maven multi-module monorepo demonstrating best practices for enterprise application development with Spring Boot, AWS SDK, and AWS CDK.
+> **AI-Native Modular Monorepo** with self-contained modules combining code, tests, and documentation.
 
-## Technology Stack
+---
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Java | 21 (LTS) | Runtime |
-| Spring Boot | 3.4.3 | Application framework |
-| AWS SDK | 2.25.x | AWS service integration |
-| AWS CDK | 2.130.x | Infrastructure as Code |
-| Maven | 3.9+ | Build tool |
-| JaCoCo | 0.8.12 | Code coverage (100% enforced) |
-| Spotless | 2.43.x | Code formatting (Google Java Format) |
+## AI-Native Module Pattern
+
+Each module is **self-contained** with code, tests, and documentation together:
+
+```
+module/
+├── src/              # Source code
+├── tests/            # Test code
+├── docs/
+│   ├── overview.md   # What & why (purpose, design, architecture)
+│   ├── api.md        # Contracts (endpoints, interfaces, methods)
+│   └── rules.md      # Business logic (validation, constraints)
+└── README.md         # Quick start guide
+```
+
+**Key Principle**: Documentation lives with the code it describes - making each module easy for both humans and AI agents to understand in isolation.
+
+---
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         MONO REPOSITORY                                 │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌─────────────────┐                                                    │
+│  │  architecture/  │  System-level documentation & decisions            │
+│  └─────────────────┘                                                    │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                      service/ (modules)                         │    │
+│  │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │    │
+│  │  │ service-rest│  │service-batch│  │ service-soap│              │    │
+│  │  │  ├ src/     │  │  ├ src/     │  │  ├ src/     │              │    │
+│  │  │  ├ tests/   │  │  ├ tests/   │  │  ├ tests/   │              │    │
+│  │  │  ├ docs/    │  │  ├ docs/    │  │  ├ docs/    │              │    │
+│  │  │  └ README   │  │  └ README   │  │  └ README   │              │    │
+│  │  └─────────────┘  └─────────────┘  └─────────────┘              │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                      common/ (modules)                          │    │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐         │    │
+│  │  │exception │  │  utils   │  │   env    │  │   aws    │         │    │
+│  │  └──────────┘  └──────────┘  └──────────┘  └──────────┘         │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                         │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                         infra/                                  │    │
+│  │  AWS CDK Infrastructure (self-contained module)                 │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
 
 ## Project Structure
 
 ```
-sample-mono-repository-maven-java-x-claude/
+sample-mono-repository/
+│
 ├── pom.xml                              # Parent POM (BOM + plugin management)
-├── common/                              # Shared libraries
-│   ├── common-aws/                      # AWS service wrappers (S3, SQS, DynamoDB)
-│   ├── common-exception/                # Exception hierarchy
-│   ├── common-utils/                    # Utilities (JSON, Date, String)
-│   └── common-env/                      # Environment & configuration
-├── service/                             # Application services
-│   ├── service-rest/                    # REST API (Spring Web)
-│   ├── service-batch/                   # Batch jobs (Spring Batch)
-│   └── service-soap/                    # SOAP service (Spring WS)
-└── infra/                               # Infrastructure as Code
-    └── construct/                       # CDK constructs (VPC, API Gateway, etc.)
+├── README.md                            # This file
+├── CLAUDE.md                            # AI agent instructions
+│
+├── architecture/                        # ══ SYSTEM-LEVEL DOCUMENTATION ══
+│   ├── system.md                        # System architecture & diagrams
+│   ├── decisions/                       # Architectural Decision Records
+│   │   ├── README.md                    # ADR index & template
+│   │   ├── ADR-001-maven-structure.md
+│   │   └── ADR-002-ai-native-docs.md
+│   └── glossary.md                      # Domain terms & abbreviations
+│
+├── components/                          # ══ APPLICATION COMPONENTS ══
+│   │
+│   ├── service-rest/                    # REST API Component (Port 8080)
+│   │   ├── pom.xml
+│   │   ├── README.md                    # Component overview
+│   │   ├── src/
+│   │   │   └── main/java/.../rest/
+│   │   │       ├── Application.java
+│   │   │       └── controller/
+│   │   ├── tests/
+│   │   │   └── java/.../rest/
+│   │   │       └── controller/
+│   │   └── docs/
+│   │       ├── overview.md              # Component purpose & design
+│   │       ├── api.md                   # API endpoints & contracts
+│   │       └── rules.md                 # Business rules & validation
+│   │
+│   ├── service-batch/                   # Batch Processing Component
+│   │   ├── pom.xml
+│   │   ├── README.md
+│   │   ├── src/
+│   │   ├── tests/
+│   │   └── docs/
+│   │       ├── overview.md
+│   │       ├── api.md                   # Job definitions & triggers
+│   │       └── rules.md                 # Processing rules
+│   │
+│   ├── service-soap/                    # SOAP Service Component (Port 8081)
+│   │   ├── pom.xml
+│   │   ├── README.md
+│   │   ├── src/
+│   │   ├── tests/
+│   │   └── docs/
+│   │       ├── overview.md
+│   │       ├── api.md                   # WSDL & operations
+│   │       └── rules.md
+│   │
+│   └── infra/                           # Infrastructure Component (AWS CDK)
+│       ├── pom.xml
+│       ├── README.md
+│       ├── src/
+│       ├── tests/
+│       └── docs/
+│           ├── overview.md              # Infrastructure architecture
+│           ├── api.md                   # Construct interfaces
+│           └── rules.md                 # Deployment rules
+│
+├── shared/                              # ══ SHARED LIBRARIES ══
+│   │
+│   ├── exception/                       # Exception Handling
+│   │   ├── pom.xml
+│   │   ├── README.md
+│   │   ├── src/
+│   │   │   └── main/java/.../exception/
+│   │   │       ├── BaseException.java
+│   │   │       ├── BusinessException.java
+│   │   │       └── TechnicalException.java
+│   │   ├── tests/
+│   │   └── docs/
+│   │       ├── overview.md
+│   │       └── rules.md                 # When to use each exception
+│   │
+│   ├── utils/                           # Utility Functions
+│   │   ├── pom.xml
+│   │   ├── README.md
+│   │   ├── src/
+│   │   │   └── main/java/.../utils/
+│   │   │       ├── JsonUtils.java
+│   │   │       ├── DateUtils.java
+│   │   │       └── StringUtils.java
+│   │   ├── tests/
+│   │   └── docs/
+│   │       ├── overview.md
+│   │       └── api.md                   # Utility method reference
+│   │
+│   ├── env/                             # Environment Configuration
+│   │   ├── pom.xml
+│   │   ├── README.md
+│   │   ├── src/
+│   │   ├── tests/
+│   │   └── docs/
+│   │       ├── overview.md
+│   │       └── rules.md                 # Configuration precedence
+│   │
+│   └── aws/                             # AWS SDK Wrappers
+│       ├── pom.xml
+│       ├── README.md
+│       ├── src/
+│       │   └── main/java/.../aws/
+│       │       ├── S3ClientWrapper.java
+│       │       ├── SqsClientWrapper.java
+│       │       └── DynamoDbClientWrapper.java
+│       ├── tests/
+│       └── docs/
+│           ├── overview.md
+│           ├── api.md                   # Wrapper method reference
+│           └── rules.md                 # Error handling rules
+│
+└── docs/                                # ══ ADDITIONAL RESOURCES ══
+    └── diagrams/                        # Visual diagrams (Draw.io)
+        ├── c4-context.drawio
+        ├── c4-container.drawio
+        └── infrastructure.drawio
 ```
 
-## Modules
+---
 
-### Common Modules
+## Module Structure Pattern
 
-| Module | Description |
-|--------|-------------|
-| `common-exception` | Base exception classes (`BusinessException`, `TechnicalException`) |
-| `common-utils` | Utility classes for JSON, Date, and String operations |
-| `common-env` | Environment management and configuration providers |
-| `common-aws` | AWS SDK v2 wrappers for S3, SQS, and DynamoDB |
+Each module is **self-contained** with code, tests, and documentation:
 
-### Service Modules
+```
+module/
+├── pom.xml           # Build configuration
+├── README.md         # Quick start guide
+├── src/              # Source code
+├── tests/            # Test code
+└── docs/
+    ├── overview.md   # What & why (purpose, design)
+    ├── api.md        # Contracts (endpoints, interfaces)
+    └── rules.md      # Business logic (validation, constraints)
+```
 
-| Module | Port | Description |
-|--------|------|-------------|
-| `service-rest` | 8080 | REST API with health and sample endpoints |
-| `service-batch` | - | Spring Batch job processing |
-| `service-soap` | 8081 | SOAP web service with WSDL support |
+### Documentation Files
 
-### Infrastructure Module
+| File | Purpose |
+|------|---------|
+| `README.md` | Quick start, build commands |
+| `docs/overview.md` | Purpose, architecture, design decisions |
+| `docs/api.md` | API endpoints, methods, contracts |
+| `docs/rules.md` | Business rules, validation, constraints |
 
-| Construct | Resources |
-|-----------|-----------|
-| `NetworkConstruct` | VPC with public, private, and isolated subnets |
-| `StorageConstruct` | S3 bucket, SQS queue, DynamoDB table |
-| `RestApiConstruct` | API Gateway for REST service |
-| `SoapApiConstruct` | API Gateway for SOAP service |
+---
 
-## Getting Started
+## Technology Stack
 
-### Prerequisites
+| Category | Technology | Version |
+|----------|------------|---------|
+| Runtime | Java | 21 (LTS) |
+| Framework | Spring Boot | 3.4.3 |
+| Build | Apache Maven | 3.9+ |
+| Cloud | AWS SDK v2 | 2.25.70 |
+| Infrastructure | AWS CDK | 2.130.0 |
+| Coverage | JaCoCo | 0.8.12 (100% enforced) |
+| Formatting | Spotless | 2.43.0 (Google Java Format) |
 
-- Java 21+
-- Maven 3.9+
-- AWS CLI (for CDK deployment)
+---
 
-### Build
+## Module Dependency Graph
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        COMPONENTS                               │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
+│  │service-rest │  │service-batch│  │ service-soap│              │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘              │
+│         │                │                │                     │
+│         └────────────────┼────────────────┘                     │
+│                          │                                      │
+│                          ▼                                      │
+├─────────────────────────────────────────────────────────────────┤
+│                         SHARED                                  │
+│  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐                 │
+│  │  env   │  │ utils  │  │  aws   │──│exception│                │
+│  └────────┘  └────────┘  └───┬────┘  └────────┘                 │
+│                              │                                  │
+│                              ▼                                  │
+│                      AWS SDK / External                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Quick Start
+
+### Build Commands
 
 ```bash
-# Compile all modules
-mvn clean compile
-
-# Run tests with coverage
+# Full build with tests and coverage
 mvn clean verify
 
-# Install to local repository
-mvn clean install
-```
-
-### Code Quality
-
-```bash
-# Check code formatting
-mvn spotless:check
-
-# Auto-fix formatting issues
+# Format code (REQUIRED before commit)
 mvn spotless:apply
+
+# Build specific component
+mvn clean verify -pl components/service-rest -am
+
+# Run tests only
+mvn test
 ```
 
 ### Run Services
 
 ```bash
-# REST Service
-cd service/service-rest
-mvn spring-boot:run
+# REST API (http://localhost:8080)
+cd components/service-rest && mvn spring-boot:run
 
-# SOAP Service
-cd service/service-soap
-mvn spring-boot:run
+# SOAP Service (http://localhost:8081)
+cd components/service-soap && mvn spring-boot:run
 
-# Batch Job
-cd service/service-batch
-mvn spring-boot:run
+# Batch Jobs
+cd components/service-batch && mvn spring-boot:run
 ```
 
 ### Deploy Infrastructure
 
 ```bash
-cd infra
-
-# Synthesize CloudFormation template
-cdk synth
-
-# Deploy to AWS
-cdk deploy
+cd components/infra
+cdk synth    # Generate CloudFormation
+cdk deploy   # Deploy to AWS
 ```
 
-## Architecture
-
-### Dependency Management
-
-The parent POM uses `<dependencyManagement>` to define versions centrally. Child modules declare only the dependencies they need **without versions**:
-
-```xml
-<!-- Parent POM defines version -->
-<dependencyManagement>
-    <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>s3</artifactId>
-        <version>2.25.70</version>
-    </dependency>
-</dependencyManagement>
-
-<!-- Child POM uses without version -->
-<dependencies>
-    <dependency>
-        <groupId>software.amazon.awssdk</groupId>
-        <artifactId>s3</artifactId>
-    </dependency>
-</dependencies>
-```
-
-This ensures:
-- Consistent versions across modules
-- No duplicate dependency declarations
-- Modules only include what they explicitly need
-
-### Quality Enforcement
-
-- **100% Line Coverage**: JaCoCo fails the build if coverage drops below 100%
-- **Google Java Format**: Spotless enforces consistent code style during `validate` phase
+---
 
 ## API Endpoints
 
-### REST Service (port 8080)
+### REST Service (Port 8080)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/health` | Health check |
 | GET | `/api/samples/{id}` | Get sample by ID |
 
-### SOAP Service (port 8081)
+### SOAP Service (Port 8081)
 
 | Endpoint | Description |
 |----------|-------------|
-| POST `/ws` | SOAP request endpoint |
+| POST `/ws` | SOAP request handler |
 | GET `/ws/sample.wsdl` | WSDL definition |
+
+---
+
+## Documentation Hierarchy
+
+```
+LEVEL 1: System (architecture/)
+├── system.md           # Overall architecture
+├── decisions/          # Why we made choices (ADRs)
+└── glossary.md         # Terminology
+
+LEVEL 2: Component (components/*/docs/)
+├── overview.md         # Component architecture
+├── api.md              # Interface contracts
+└── rules.md            # Business rules
+
+LEVEL 3: Code
+├── README.md           # Quick reference
+├── Javadoc             # API documentation
+└── Test classes        # Usage examples
+```
+
+---
+
+## AI Agent Guidelines
+
+### Context Loading Order
+
+```
+1. CLAUDE.md                  # Build & conventions
+2. architecture/system.md     # System architecture
+3. module/README.md           # Module quick start
+4. module/docs/overview.md    # Module design
+5. module/docs/api.md         # API contracts
+6. module/docs/rules.md       # Business rules
+7. Target source file         # Code to modify
+8. Target test file           # Expected behavior
+```
+
+### When Modifying a Module
+
+1. Read `module/README.md` first
+2. Check `module/docs/rules.md` for business constraints
+3. Review `module/docs/api.md` for contracts
+4. Read target source file
+5. Read corresponding test file
+6. Make changes following patterns
+7. Update tests (100% coverage required)
+8. Run `mvn spotless:apply`
+
+---
+
+## Key Conventions
+
+### Exception Handling
+
+```java
+// Business errors (invalid input, rule violations)
+throw new BusinessException("ERR_CODE", "User message");
+
+// Technical errors (infrastructure failures)
+throw new TechnicalException("ERR_CODE", "Technical message", cause);
+```
+
+### Code Quality
+
+- **Coverage**: 100% line coverage (JaCoCo)
+- **Format**: Google Java Format (Spotless)
+- **Javadoc**: Required for public classes/methods
+- **No emojis**: Never in code or comments
+
+### Testing
+
+```java
+@ExtendWith(MockitoExtension.class)
+class MyClassTest {
+    @Mock private Dependency dep;
+    @InjectMocks private MyClass myClass;
+
+    @Test
+    void shouldDoSomething() {
+        // Arrange, Act, Assert
+    }
+}
+```
+
+---
+
+## Adding New Modules
+
+### New Service Module
+
+```
+service/service-new/
+├── pom.xml           # Inherit from parent
+├── README.md         # Quick start
+├── src/              # Source code
+├── tests/            # Test code
+└── docs/
+    ├── overview.md   # Purpose & design
+    ├── api.md        # Endpoints
+    └── rules.md      # Business rules
+```
+
+### New Common Module
+
+```
+common/common-new/
+├── pom.xml           # Inherit from parent
+├── README.md         # Quick start
+├── src/              # Source code
+├── tests/            # Test code
+└── docs/
+    ├── overview.md   # Purpose & design
+    ├── api.md        # Methods & interfaces
+    └── rules.md      # Usage rules
+```
+
+---
 
 ## License
 

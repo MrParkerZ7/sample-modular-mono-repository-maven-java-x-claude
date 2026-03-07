@@ -1,130 +1,164 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
+> AI agent instructions for this Java Maven monorepo.
 
-## Project Overview
+---
 
-Java Maven multi-module monorepo with Spring Boot services, AWS SDK integrations, and AWS CDK infrastructure.
+## Quick Reference
+
+```
+BUILD:    mvn clean verify       # Full build with tests
+FORMAT:   mvn spotless:apply     # Fix formatting (REQUIRED)
+TEST:     mvn test               # Run tests only
+COVERAGE: 100% line coverage     # Enforced by JaCoCo
+```
+
+---
+
+## AI-Native Module Pattern
+
+Each module is **self-contained** with code, tests, and documentation:
+
+```
+module/
+├── src/              # Source code
+├── tests/            # Test code
+├── docs/
+│   ├── overview.md   # What & why (purpose, design)
+│   ├── api.md        # Contracts (endpoints, interfaces)
+│   └── rules.md      # Business logic (validation, constraints)
+└── README.md         # Quick start guide
+```
+
+**Key Principle**: Documentation lives with the code it describes.
+
+---
+
+## Project Structure
+
+```
+repo/
+├── architecture/           # System docs & decisions
+│   ├── system.md          # Architecture overview
+│   ├── decisions/         # ADRs
+│   └── glossary.md        # Terms
+│
+├── service/               # Service modules
+│   ├── service-rest/      # REST API (port 8080)
+│   ├── service-batch/     # Batch jobs
+│   └── service-soap/      # SOAP (port 8081)
+│
+├── common/                # Shared modules
+│   ├── common-exception/  # Base/Business/Technical
+│   ├── common-utils/      # JSON/Date/String
+│   ├── common-env/        # Configuration
+│   └── aws/               # AWS SDK wrappers (modular)
+│       ├── aws-s3/        # S3 only
+│       ├── aws-sqs/       # SQS only
+│       └── aws-dynamodb/  # DynamoDB only
+│
+└── infra/                 # AWS CDK infrastructure
+```
+
+---
+
+## Context Loading Order
+
+When working on a module, load context in this order:
+
+```
+1. CLAUDE.md                  # This file (conventions)
+2. architecture/system.md     # System architecture
+3. module/README.md           # Module quick start
+4. module/docs/overview.md    # Module design
+5. module/docs/api.md         # API contracts
+6. module/docs/rules.md       # Business rules
+7. Target source file         # Code to modify
+8. Target test file           # Expected behavior
+```
+
+---
 
 ## Build Commands
 
 ```bash
-# Full build with tests and coverage
+# Full build (primary)
 mvn clean verify
 
 # Compile only
 mvn clean compile
 
-# Install to local repository
-mvn clean install
+# Build specific module
+mvn clean verify -pl service/service-rest -am
 
-# Build specific module (with dependencies)
-mvn clean verify -pl infra -am
-
-# Skip tests
-mvn clean install -DskipTests
-```
-
-## Code Quality
-
-```bash
-# Check formatting (runs automatically during validate phase)
-mvn spotless:check
-
-# Auto-fix formatting
+# Format code (REQUIRED before commit)
 mvn spotless:apply
 ```
 
-**Important**: Always run `mvn spotless:apply` before committing to fix formatting issues.
-
-## Testing
-
-- **Coverage**: 100% line coverage enforced by JaCoCo
-- **Framework**: JUnit 5 + Mockito
-- All new code must have complete test coverage or the build will fail
-
-```bash
-# Run tests only
-mvn test
-
-# Run tests with coverage report
-mvn verify
-# Coverage reports: target/site/jacoco/index.html
-```
-
-## Module Structure
-
-| Module | Path | Purpose |
-|--------|------|---------|
-| Parent POM | `pom.xml` | Dependency & plugin management |
-| common-exception | `common/common-exception` | Exception classes |
-| common-utils | `common/common-utils` | JSON, Date, String utilities |
-| common-env | `common/common-env` | Environment configuration |
-| common-aws | `common/common-aws` | AWS SDK wrappers |
-| service-rest | `service/service-rest` | REST API (port 8080) |
-| service-batch | `service/service-batch` | Spring Batch jobs |
-| service-soap | `service/service-soap` | SOAP service (port 8081) |
-| infra | `infra` | AWS CDK constructs |
+---
 
 ## Key Conventions
 
 ### Dependencies
-- Versions defined in parent POM `<dependencyManagement>`
-- Child modules declare dependencies WITHOUT versions
-- Each module only includes dependencies it actually uses
-
-### Code Style
-- Google Java Format enforced via Spotless
-- No emojis in code or comments
-- Javadoc for public classes and methods
+- Versions in parent POM `<dependencyManagement>`
+- Child modules: NO version declarations
 
 ### Exceptions
-- Extend `BusinessException` for business logic errors
-- Extend `TechnicalException` for infrastructure/technical errors
+```java
+// Business errors (client fault)
+throw new BusinessException("ERR_CODE", "Message");
 
-### Testing
-- Test class naming: `*Test.java`
-- Use `@ExtendWith(MockitoExtension.class)` for mocking
-- Spring Boot tests: `@SpringBootTest` or `@WebMvcTest`
-
-## CDK Infrastructure
-
-```bash
-cd infra
-
-# Synthesize CloudFormation
-cdk synth
-
-# Deploy
-cdk deploy
-
-# Diff against deployed stack
-cdk diff
+// Technical errors (system fault)
+throw new TechnicalException("ERR_CODE", "Message", cause);
 ```
 
-### Constructs
-- `NetworkConstruct` - VPC with 3 subnet types (public, private, isolated)
-- `StorageConstruct` - S3, SQS, DynamoDB
-- `RestApiConstruct` - API Gateway for REST service
-- `SoapApiConstruct` - API Gateway for SOAP service
+### Testing
+- 100% line coverage required
+- Pattern: `@ExtendWith(MockitoExtension.class)`
+- Naming: `*Test.java`
 
-## Common Tasks
+### Code Style
+- Google Java Format (Spotless)
+- No emojis
+- Javadoc for public members
 
-### Adding a new common module
-1. Create directory under `common/`
-2. Add `pom.xml` inheriting from parent (use `../../pom.xml` relativePath)
-3. Add module to `common/pom.xml` modules list
-4. Add dependency management entry in parent POM
+---
 
-### Adding a new service
-1. Create directory under `service/`
-2. Add `pom.xml` with Spring Boot plugin
-3. Add module to `service/pom.xml` modules list
-4. Include `@SpringBootApplication` main class
-5. Add application.yml configuration
+## Module Quick Reference
 
-### Adding AWS resources
-1. Create new construct in `infra/src/main/java/com/example/infra/construct/`
-2. Add construct to `MainStack`
-3. Add corresponding test class
-4. Ensure 100% coverage
+| Module | Path | Port |
+|--------|------|------|
+| REST | `service/service-rest` | 8080 |
+| Batch | `service/service-batch` | - |
+| SOAP | `service/service-soap` | 8081 |
+| CDK | `infra` | - |
+
+---
+
+## Adding New Module
+
+1. Create module directory with structure:
+   ```
+   module/
+   ├── pom.xml
+   ├── README.md
+   ├── src/
+   ├── tests/
+   └── docs/
+       ├── overview.md
+       ├── api.md
+       └── rules.md
+   ```
+2. Add to parent POM modules list
+3. Write code with 100% test coverage
+4. Run `mvn spotless:apply`
+
+---
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Format fails | `mvn spotless:apply` |
+| Coverage fails | Check `target/site/jacoco/` |
+| Module not found | `mvn install -DskipTests` |
