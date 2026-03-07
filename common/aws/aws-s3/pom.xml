@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>common-exception</artifactId>
+            <artifactId>exception</artifactId>
         </dependency>
 
         <dependency>

@@ -11,22 +11,13 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>common-utils</artifactId>
+    <artifactId>env</artifactId>
     <packaging>jar</packaging>
 
-    <name>Common Utils</name>
-    <description>General utilities (JSON, Date, String, etc.)</description>
+    <name>Environment</name>
+    <description>Environment manager (config, profiles)</description>
 
     <dependencies>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

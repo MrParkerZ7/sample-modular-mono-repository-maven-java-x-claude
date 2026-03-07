@@ -20,15 +20,15 @@
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>common-exception</artifactId>
+            <artifactId>exception</artifactId>
         </dependency>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>common-utils</artifactId>
+            <artifactId>utils</artifactId>
         </dependency>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>common-env</artifactId>
+            <artifactId>env</artifactId>
         </dependency>
 
         <dependency>

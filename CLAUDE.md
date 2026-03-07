@@ -49,9 +49,9 @@ repo/
 │   └── service-soap/      # SOAP (port 8081)
 │
 ├── common/                # Shared modules
-│   ├── common-exception/  # Base/Business/Technical
-│   ├── common-utils/      # JSON/Date/String
-│   ├── common-env/        # Configuration
+│   ├── exception/         # Base/Business/Technical
+│   ├── utils/             # JSON/Date/String
+│   ├── env/               # Configuration
 │   └── aws/               # AWS SDK wrappers (modular)
 │       ├── aws-s3/        # S3 only
 │       ├── aws-sqs/       # SQS only

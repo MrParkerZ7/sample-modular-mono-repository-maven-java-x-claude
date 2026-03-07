@@ -82,17 +82,17 @@
             <!-- Internal Modules -->
             <dependency>
                 <groupId>com.example</groupId>
-                <artifactId>common-exception</artifactId>
+                <artifactId>exception</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.example</groupId>
-                <artifactId>common-utils</artifactId>
+                <artifactId>utils</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.example</groupId>
-                <artifactId>common-env</artifactId>
+                <artifactId>env</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

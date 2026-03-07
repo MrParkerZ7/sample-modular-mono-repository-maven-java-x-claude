@@ -11,11 +11,11 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>common-env</artifactId>
+    <artifactId>exception</artifactId>
     <packaging>jar</packaging>
 
-    <name>Common Environment</name>
-    <description>Environment manager (config, profiles)</description>
+    <name>Exception</name>
+    <description>Standard exceptions hierarchy</description>
 
     <dependencies>
         <dependency>
