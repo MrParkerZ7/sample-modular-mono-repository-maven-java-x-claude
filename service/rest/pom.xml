@@ -24,5 +24,6 @@
         <module>user-activity</module>
         <module>order</module>
         <module>payment</module>
+        <module>endorsement</module>
     </modules>
 </project>
