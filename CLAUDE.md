@@ -57,9 +57,16 @@ repo/
 ├── model/                 # Shared domain model modules
 │   └── base/              # BaseEntity, AuditableEntity, interfaces
 │
-├── service/               # Service modules (hierarchical)
-│   ├── rest/              # REST aggregator
-│   │   └── sample/        # Sample REST API (port 8080)
+├── application/             # Application modules (hierarchical)
+│   ├── api/               # API aggregator (REST services)
+│   │   ├── sample/        # Sample REST API (port 8080)
+│   │   ├── user-profile/  # User Profile API (port 8082)
+│   │   ├── product/       # Product API (port 8083)
+│   │   ├── user-activity/ # User Activity API (port 8084)
+│   │   ├── order/         # Order API (port 8085)
+│   │   ├── payment/       # Payment API (port 8086)
+│   │   ├── endorsement/   # Endorsement API (port 8087)
+│   │   └── oauth/         # OAuth2 Auth Server (port 9000)
 │   ├── batch/             # Batch aggregator
 │   │   └── sample/        # Sample batch job
 │   └── soap/              # SOAP aggregator
@@ -97,7 +104,7 @@ mvn clean verify
 mvn clean compile
 
 # Build specific module
-mvn clean verify -pl service/rest -am
+mvn clean verify -pl application/api -am
 
 # Format code (REQUIRED before commit)
 mvn spotless:apply
@@ -137,12 +144,19 @@ throw new TechnicalException("ERR_CODE", "Message", cause);
 | Type | Module | Artifact ID | Path | Port |
 |------|--------|-------------|------|------|
 | Model | Base | `model-base` | `model/base` | - |
-| REST | Sample | `rest-sample` | `service/rest/sample` | 8080 |
-| Batch | Sample | `batch-sample` | `service/batch/sample` | - |
-| SOAP | Sample | `soap-sample` | `service/soap/sample` | 8081 |
+| API | Sample | `rest-sample` | `application/api/sample` | 8080 |
+| API | User Profile | `user-profile` | `application/api/user-profile` | 8082 |
+| API | Product | `product` | `application/api/product` | 8083 |
+| API | User Activity | `user-activity` | `application/api/user-activity` | 8084 |
+| API | Order | `order` | `application/api/order` | 8085 |
+| API | Payment | `payment` | `application/api/payment` | 8086 |
+| API | Endorsement | `endorsement` | `application/api/endorsement` | 8087 |
+| API | OAuth | `oauth` | `application/api/oauth` | 9000 |
+| Batch | Sample | `batch-sample` | `application/batch/sample` | - |
+| SOAP | Sample | `soap-sample` | `application/soap/sample` | 8081 |
 | Infra | CDK | `infra` | `infra` | - |
 
-**Note**: Each service type (rest, batch, soap) is an aggregator supporting multiple services.
+**Note**: Each application type (api, batch, soap) is an aggregator supporting multiple services.
 
 ### Layer Dependencies
 ```
@@ -150,7 +164,7 @@ Common  (utilities, no domain knowledge)
   |
 Model   (shared domain models, extends common)
   |
-Service (API endpoints, depends on model + common)
+Application (API endpoints, depends on model + common)
 ```
 
 ---
@@ -179,18 +193,18 @@ model/new-model/
 ```
 Add `<module>new-model</module>` to `model/pom.xml`
 
-### New Service Module
+### New Application Module
 ```
-service/{type}/new-service/
+application/{type}/new-service/
 ├── pom.xml              # relativePath: ../../../pom.xml
 ├── README.md            # artifactId: {type}-new-service
 ├── src/
 ├── tests/
 └── docs/
 ```
-Add `<module>new-service</module>` to `service/{type}/pom.xml`
+Add `<module>new-service</module>` to `application/{type}/pom.xml`
 
-Example: `service/batch/notify-daily/` with artifactId `batch-notify-daily`
+Example: `application/batch/notify-daily/` with artifactId `batch-notify-daily`
 
 ---
 

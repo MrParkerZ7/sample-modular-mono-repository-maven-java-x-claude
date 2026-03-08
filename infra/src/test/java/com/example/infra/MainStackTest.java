@@ -17,6 +17,7 @@ class MainStackTest {
     assertNotNull(stack.getBucket());
     assertNotNull(stack.getQueue());
     assertNotNull(stack.getTable());
+    assertNotNull(stack.getDatabase());
     assertNotNull(stack.getRestApi());
     assertNotNull(stack.getSoapApi());
   }
@@ -31,6 +32,7 @@ class MainStackTest {
     assertNotNull(stack.getBucket());
     assertNotNull(stack.getQueue());
     assertNotNull(stack.getTable());
+    assertNotNull(stack.getDatabase());
     assertNotNull(stack.getRestApi());
     assertNotNull(stack.getSoapApi());
   }
