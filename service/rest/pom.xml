@@ -19,5 +19,10 @@
 
     <modules>
         <module>sample</module>
+        <module>user-profile</module>
+        <module>product</module>
+        <module>user-activity</module>
+        <module>order</module>
+        <module>payment</module>
     </modules>
 </project>
