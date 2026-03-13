@@ -1,0 +1,115 @@
+services:
+
+  # --- REST API Services ---
+
+  rest-sample:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/api/sample
+        JAR_NAME: rest-sample-1.0.0-SNAPSHOT.jar
+    image: rest-sample:latest
+    ports:
+      - "8080:8080"
+
+  user-profile:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/api/user-profile
+        JAR_NAME: user-profile-1.0.0-SNAPSHOT.jar
+    image: user-profile:latest
+    ports:
+      - "8082:8082"
+
+  product:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/api/product
+        JAR_NAME: product-1.0.0-SNAPSHOT.jar
+    image: product:latest
+    ports:
+      - "8083:8083"
+
+  user-activity:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/api/user-activity
+        JAR_NAME: user-activity-1.0.0-SNAPSHOT.jar
+    image: user-activity:latest
+    ports:
+      - "8084:8084"
+
+  order:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/api/order
+        JAR_NAME: order-1.0.0-SNAPSHOT.jar
+    image: order:latest
+    ports:
+      - "8085:8085"
+
+  payment:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/api/payment
+        JAR_NAME: payment-1.0.0-SNAPSHOT.jar
+    image: payment:latest
+    ports:
+      - "8086:8086"
+
+  endorsement:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/api/endorsement
+        JAR_NAME: endorsement-1.0.0-SNAPSHOT.jar
+    image: endorsement:latest
+    ports:
+      - "8087:8087"
+
+  oauth-server:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/api/oauth
+        JAR_NAME: oauth-server-1.0.0-SNAPSHOT.jar
+    image: oauth-server:latest
+    ports:
+      - "9000:9000"
+
+  # --- Batch Services ---
+
+  batch-sample:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/batch/sample
+        JAR_NAME: batch-sample-1.0.0-SNAPSHOT.jar
+    image: batch-sample:latest
+
+  # --- SOAP Services ---
+
+  soap-sample:
+    build:
+      context: .
+      dockerfile: docker/app.Dockerfile
+      args:
+        MODULE_PATH: application/soap/sample
+        JAR_NAME: soap-sample-1.0.0-SNAPSHOT.jar
+    image: soap-sample:latest
+    ports:
+      - "8081:8081"
